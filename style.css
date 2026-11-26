@@ -38,7 +38,8 @@ body {
   background-color: var(--cor-fundo);
   color: var(--cor-texto);
   font-family: 'Nunito', Arial, Helvetica, sans-serif;
-  line-height: 700;       /* espaço entre linhas, melhora a leitura */
+  font-weight: 700;
+  line-height: 1.6;      /* espaço entre linhas, melhora a leitura */
   min-height: 100vh;      /* ocupa no mínimo a altura toda da tela */
   display: flex;          /* flex em coluna para o rodapé ficar embaixo */
   flex-direction: column;
