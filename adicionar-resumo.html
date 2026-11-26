@@ -20,7 +20,7 @@
     <nav>
       <ul class="menu">
         <!-- A classe "ativo" destaca o link da página em que estamos -->
-        <li><a href="adicionar-resumo.html" class="ativo">Adicionar resumo</a></li>
+        <li><a href="adicionar-resumo.html" class="ativo abrir-seletor">Adicionar resumo</a></li>
         <li><a href="todos-resumos.html">Todos os resumos</a></li>
       </ul>
     </nav>
@@ -29,14 +29,28 @@
   <main>
     <h1 class="titulo-pagina">Adicionar resumo</h1>
 
-    <!-- PLACEHOLDER: o formulário de envio de PDF virá aqui
-         quando adicionarmos o JavaScript. -->
-    <p class="texto-suave">Em breve: aqui você vai poder enviar um novo resumo em PDF.</p>
+    <p class="texto-suave">Escolha um ou mais arquivos em PDF. Eles são enviados para o repositório no GitHub.</p>
+
+    <!-- Botão grande: a classe "abrir-seletor" faz o script.js abrir o explorador -->
+    <button class="botao botao-grande abrir-seletor">📂 Escolher PDF</button>
+
+    <!-- Apaga o token salvo no navegador (use se ele expirar ou se quiser trocar) -->
+    <p class="dica">
+      <button id="trocar-token" class="link-simples">Trocar token do GitHub</button>
+    </p>
   </main>
 
   <footer class="rodape">
     <p>Meus Resumos · Ciência da Computação</p>
   </footer>
+
+  <!-- Input de arquivo escondido (hidden). O script.js "clica" nele
+       quando você clica em "Adicionar resumo", abrindo o explorador.
+       accept: mostra só PDFs | multiple: permite escolher vários -->
+  <input type="file" id="seletor-pdf" accept="application/pdf" multiple hidden>
+
+  <!-- O script fica no fim do body para carregar depois do HTML -->
+  <script src="script.js"></script>
 
 </body>
 

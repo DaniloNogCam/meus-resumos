@@ -23,7 +23,7 @@
     <!-- Menu à direita: <nav> indica uma área de navegação -->
     <nav>
       <ul class="menu">
-        <li><a href="adicionar-resumo.html">Adicionar resumo</a></li>
+        <li><a href="adicionar-resumo.html" class="abrir-seletor">Adicionar resumo</a></li>
         <li><a href="todos-resumos.html">Todos os resumos</a></li>
       </ul>
     </nav>
@@ -41,7 +41,7 @@
     <!-- Opções principais, em formato de cartões clicáveis -->
     <section class="opcoes">
 
-      <a href="adicionar-resumo.html" class="cartao">
+      <a href="adicionar-resumo.html" class="cartao abrir-seletor">
         <div class="cartao-icone">➕</div>
         <h2>Adicionar um resumo</h2>
         <p>Envie um novo resumo em PDF.</p>
@@ -60,6 +60,14 @@
   <footer class="rodape">
     <p>Meus Resumos · Ciência da Computação</p>
   </footer>
+
+  <!-- Input de arquivo escondido (hidden). O script.js "clica" nele
+       quando você clica em "Adicionar resumo", abrindo o explorador.
+       accept: mostra só PDFs | multiple: permite escolher vários -->
+  <input type="file" id="seletor-pdf" accept="application/pdf" multiple hidden>
+
+  <!-- O script fica no fim do body para carregar depois do HTML -->
+  <script src="script.js"></script>
 
 </body>
 

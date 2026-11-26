@@ -185,7 +185,106 @@ main {
 }
 
 /* ---------------------------------------------------------
-   7. RODAPÉ
+   7. BOTÕES
+   --------------------------------------------------------- */
+.botao {
+  background-color: var(--cor-destaque);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;        /* mãozinha ao passar o mouse */
+  text-decoration: none;  /* para quando o botão for um link <a> */
+  display: inline-block;
+  transition: opacity 0.2s;
+}
+
+.botao:hover {
+  opacity: 0.85;
+}
+
+/* Botão vermelho para ações perigosas (excluir) */
+.botao-perigo {
+  background-color: #e05555;
+}
+
+/* Botão maior, usado na página "Adicionar resumo" */
+.botao-grande {
+  margin-top: 24px;
+  padding: 16px 32px;
+  font-size: 1.1rem;
+}
+
+/* ---------------------------------------------------------
+   8. LISTA DE RESUMOS (página "Todos os resumos")
+   --------------------------------------------------------- */
+#lista-resumos {
+  display: flex;
+  flex-direction: column; /* um resumo embaixo do outro */
+  gap: 12px;
+}
+
+.item-resumo {
+  background-color: var(--cor-cartao);
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between; /* info à esquerda, botões à direita */
+  align-items: center;
+  gap: 16px;
+}
+
+.item-info h3 {
+  font-size: 1.05rem;
+  word-break: break-word; /* quebra nomes de arquivo muito longos */
+}
+
+.item-info p {
+  font-size: 0.9rem;
+}
+
+.item-acoes {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;         /* os botões não encolhem */
+}
+
+/* Botão que parece um link de texto (ex.: "Trocar token") */
+.link-simples {
+  background: none;
+  border: none;
+  color: var(--cor-texto-suave);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.dica {
+  margin-top: 16px;
+}
+
+.espaco-abaixo {
+  margin-bottom: 24px;
+}
+
+/* Aviso fixo no canto inferior da tela ("Enviando...") */
+.aviso {
+  position: fixed;        /* fica parado mesmo rolando a página */
+  bottom: 24px;
+  right: 24px;
+  background-color: var(--cor-destaque);
+  color: #000;
+  font-weight: bold;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------------------------------------------------------
+   9. RODAPÉ
    --------------------------------------------------------- */
 .rodape {
   text-align: center;
@@ -196,10 +295,16 @@ main {
 }
 
 /* ---------------------------------------------------------
-   8. RESPONSIVIDADE (telas pequenas, como celular)
+   10. RESPONSIVIDADE (telas pequenas, como celular)
    @media aplica as regras só quando a tela tem até 600px.
    --------------------------------------------------------- */
 @media (max-width: 600px) {
+  /* No celular, os botões do resumo vão para baixo do nome */
+  .item-resumo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .header {
     flex-direction: column; /* logo em cima, menu embaixo */
     gap: 12px;

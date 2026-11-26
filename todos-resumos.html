@@ -19,7 +19,7 @@
 
     <nav>
       <ul class="menu">
-        <li><a href="adicionar-resumo.html">Adicionar resumo</a></li>
+        <li><a href="adicionar-resumo.html" class="abrir-seletor">Adicionar resumo</a></li>
         <!-- A classe "ativo" destaca o link da página em que estamos -->
         <li><a href="todos-resumos.html" class="ativo">Todos os resumos</a></li>
       </ul>
@@ -28,15 +28,25 @@
 
   <main>
     <h1 class="titulo-pagina">Todos os resumos</h1>
+    <p class="texto-suave espaco-abaixo">Um resumo recém-enviado pode levar cerca de 1 minuto para abrir.</p>
 
-    <!-- PLACEHOLDER: a lista de resumos (PDFs) virá aqui.
-         Ainda não há nenhum resumo cadastrado. -->
-    <p class="texto-suave">Nenhum resumo adicionado ainda.</p>
+    <!-- O script.js preenche esta div com os resumos salvos -->
+    <div id="lista-resumos">
+      <p class="texto-suave">Carregando...</p>
+    </div>
   </main>
 
   <footer class="rodape">
     <p>Meus Resumos · Ciência da Computação</p>
   </footer>
+
+  <!-- Input de arquivo escondido (hidden). O script.js "clica" nele
+       quando você clica em "Adicionar resumo", abrindo o explorador.
+       accept: mostra só PDFs | multiple: permite escolher vários -->
+  <input type="file" id="seletor-pdf" accept="application/pdf" multiple hidden>
+
+  <!-- O script fica no fim do body para carregar depois do HTML -->
+  <script src="script.js"></script>
 
 </body>
 
