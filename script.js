@@ -156,6 +156,79 @@ async function excluirResumo(nome, sha) {
 }
 
 /* ---------------------------------------------------------
+   3.1 NOMES DE EXIBIÇÃO (renomear)
+   O GitHub não tem um jeito simples de renomear arquivos pela
+   API. Então não mexemos no PDF: guardamos os nomes bonitos
+   num arquivo "resumos/nomes.json", no formato:
+     { "calculo-1.pdf": "Cálculo 1 - Limites e derivadas" }
+   Se um PDF não estiver nesse arquivo, mostramos o nome do arquivo.
+   --------------------------------------------------------- */
+const ARQUIVO_NOMES = "nomes.json";
+
+/*
+ * A API envia e recebe o conteúdo em Base64. As funções do
+ * navegador para Base64 (btoa/atob) não entendem acentos,
+ * então usamos TextEncoder/TextDecoder para converter via UTF-8.
+ */
+function textoParaBase64(texto) {
+  const bytes = new TextEncoder().encode(texto);
+  let binario = "";
+  bytes.forEach((b) => (binario += String.fromCharCode(b)));
+  return btoa(binario);
+}
+
+function base64ParaTexto(base64) {
+  const binario = atob(base64.replace(/\n/g, "")); // o GitHub quebra o Base64 em linhas
+  const bytes = Uint8Array.from(binario, (letra) => letra.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+/**
+ * Lê o nomes.json do repositório.
+ * Devolve { nomes: {...}, sha: "..." }. O sha é necessário para
+ * atualizar o arquivo depois (o GitHub usa para evitar conflitos).
+ */
+async function lerNomes() {
+  const resposta = await chamarApi(caminhoDoArquivo(ARQUIVO_NOMES));
+
+  // 404 = ainda não renomeamos nada, o arquivo não existe
+  if (resposta.status === 404) return { nomes: {}, sha: null };
+  if (!resposta.ok) throw new Error("ERRO_" + resposta.status);
+
+  const dados = await resposta.json();
+  return { nomes: JSON.parse(base64ParaTexto(dados.content)), sha: dados.sha };
+}
+
+/**
+ * Salva um novo nome para um PDF.
+ * Se novoNome for vazio, apaga o nome e volta a mostrar o nome do arquivo.
+ */
+async function salvarNome(arquivo, novoNome) {
+  // Lemos de novo para pegar a versão mais recente (e o sha atual)
+  const { nomes, sha } = await lerNomes();
+
+  if (novoNome) {
+    nomes[arquivo] = novoNome;
+  } else {
+    delete nomes[arquivo];
+  }
+
+  const corpo = {
+    message: "Renomeia resumo " + arquivo,
+    // JSON.stringify com 2 espaços deixa o arquivo legível no GitHub
+    content: textoParaBase64(JSON.stringify(nomes, null, 2)),
+  };
+  if (sha) corpo.sha = sha; // só existe se o arquivo já foi criado antes
+
+  const resposta = await chamarApi(caminhoDoArquivo(ARQUIVO_NOMES), {
+    metodo: "PUT",
+    comToken: true,
+    corpo: corpo,
+  });
+  if (!resposta.ok) throw new Error("ERRO_" + resposta.status);
+}
+
+/* ---------------------------------------------------------
    4. MENSAGENS DE ERRO E AVISOS
    --------------------------------------------------------- */
 
@@ -252,8 +325,11 @@ async function mostrarListaDeResumos() {
   if (!lista) return; // não estamos na página da lista
 
   let resumos;
+  let nomes = {};
   try {
     resumos = await listarResumos();
+    // Os nomes bonitos são opcionais: se der erro, usamos os nomes dos arquivos
+    nomes = (await lerNomes().catch(() => ({ nomes: {} }))).nomes;
   } catch (erro) {
     lista.innerHTML = "";
     const p = document.createElement("p");
@@ -268,8 +344,11 @@ async function mostrarListaDeResumos() {
     return;
   }
 
-  // Ordem alfabética (localeCompare respeita acentos)
-  resumos.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  // Título de cada resumo: o nome que você deu, ou o nome do arquivo
+  const titulo = (resumo) => nomes[resumo.name] || resumo.name;
+
+  // Ordem alfabética pelo título (localeCompare respeita acentos)
+  resumos.sort((a, b) => titulo(a).localeCompare(titulo(b), "pt-BR"));
 
   lista.innerHTML = "";
 
@@ -283,11 +362,14 @@ async function mostrarListaDeResumos() {
     info.className = "item-info";
 
     const nome = document.createElement("h3");
-    nome.textContent = "📄 " + resumo.name;
+    nome.textContent = "📄 " + titulo(resumo);
 
+    // Embaixo do título: nome do arquivo (se foi renomeado) e tamanho
     const detalhes = document.createElement("p");
     detalhes.className = "texto-suave";
-    detalhes.textContent = formatarTamanho(resumo.size);
+    detalhes.textContent = nomes[resumo.name]
+      ? resumo.name + " · " + formatarTamanho(resumo.size)
+      : formatarTamanho(resumo.size);
 
     info.append(nome, detalhes);
 
@@ -303,22 +385,45 @@ async function mostrarListaDeResumos() {
     botaoAbrir.href = PASTA_RESUMOS + "/" + encodeURIComponent(resumo.name);
     botaoAbrir.target = "_blank"; // nova aba
 
-    const botaoExcluir = document.createElement("button");
-    botaoExcluir.className = "botao botao-perigo";
-    botaoExcluir.textContent = "Excluir";
-    botaoExcluir.addEventListener("click", async () => {
-      if (!confirm('Excluir "' + resumo.name + '" do repositório?')) return;
-      mostrarAviso("Excluindo " + resumo.name + "...");
+    const botaoRenomear = document.createElement("button");
+    botaoRenomear.className = "botao botao-secundario";
+    botaoRenomear.textContent = "Renomear";
+    botaoRenomear.addEventListener("click", async () => {
+      // O prompt já vem preenchido com o título atual
+      const novoNome = prompt(
+        "Novo nome para o resumo (deixe vazio para voltar ao nome do arquivo):",
+        titulo(resumo)
+      );
+      if (novoNome === null) return; // clicou em Cancelar
+
+      mostrarAviso("Salvando nome...");
       try {
-        await excluirResumo(resumo.name, resumo.sha);
-        item.remove(); // tira da tela na hora
+        await salvarNome(resumo.name, novoNome.trim());
+        mostrarListaDeResumos(); // redesenha a lista com o novo nome
       } catch (erro) {
         alert(mensagemDeErro(erro, resumo.name));
       }
       mostrarAviso("");
     });
 
-    acoes.append(botaoAbrir, botaoExcluir);
+    const botaoExcluir = document.createElement("button");
+    botaoExcluir.className = "botao botao-perigo";
+    botaoExcluir.textContent = "Excluir";
+    botaoExcluir.addEventListener("click", async () => {
+      if (!confirm('Excluir "' + titulo(resumo) + '" do repositório?')) return;
+      mostrarAviso("Excluindo " + titulo(resumo) + "...");
+      try {
+        await excluirResumo(resumo.name, resumo.sha);
+        item.remove(); // tira da tela na hora
+        // Se ele tinha um nome bonito, apaga também do nomes.json
+        if (nomes[resumo.name]) await salvarNome(resumo.name, "");
+      } catch (erro) {
+        alert(mensagemDeErro(erro, resumo.name));
+      }
+      mostrarAviso("");
+    });
+
+    acoes.append(botaoAbrir, botaoRenomear, botaoExcluir);
     item.append(info, acoes);
     lista.appendChild(item);
   });

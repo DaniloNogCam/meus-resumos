@@ -326,3 +326,8 @@ main {
     font-size: 1.8rem;
   }
 }
+
+/* Botão cinza, para ações neutras (renomear) */
+.botao-secundario {
+  background-color: #8a8a8a;
+}
