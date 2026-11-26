@@ -3,11 +3,14 @@
    Este arquivo é usado por TODAS as páginas do site.
    ========================================================= */
 
+   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
 /* ---------------------------------------------------------
    1. VARIÁVEIS DE COR
    Guardamos as cores aqui para trocar em um só lugar.
    Para usar: color: var(--nome-da-variavel);
    --------------------------------------------------------- */
+   
 :root {
   --cor-fundo: #000000;        /* fundo preto do body */
   --cor-header: #4a4a4a;       /* cinza do header */
@@ -34,8 +37,8 @@
 body {
   background-color: var(--cor-fundo);
   color: var(--cor-texto);
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.6;       /* espaço entre linhas, melhora a leitura */
+  font-family: 'Nunito', Arial, Helvetica, sans-serif;
+  line-height: 700;       /* espaço entre linhas, melhora a leitura */
   min-height: 100vh;      /* ocupa no mínimo a altura toda da tela */
   display: flex;          /* flex em coluna para o rodapé ficar embaixo */
   flex-direction: column;
