@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- A linha acima avisa ao navegador que este é um documento HTML5 -->
+<html lang="pt-BR">
+
+<head>
+  <!-- O <head> guarda informações sobre a página (não aparecem na tela) -->
+  <meta charset="UTF-8"> <!-- permite acentos e "ç" -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ajusta no celular -->
+  <title>Meus Resumos | Início</title> <!-- texto da aba do navegador -->
+  <link rel="stylesheet" href="style.css"> <!-- liga este HTML ao arquivo de estilos -->
+</head>
+
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="header">
+    <!-- Logo à esquerda: clicar nela volta para a página inicial -->
+    <a href="index.html" class="logo">
+      <span class="logo-icone">R</span>
+      <span>Meus Resumos</span>
+    </a>
+
+    <!-- Menu à direita: <nav> indica uma área de navegação -->
+    <nav>
+      <ul class="menu">
+        <li><a href="adicionar-resumo.html">Adicionar resumo</a></li>
+        <li><a href="todos-resumos.html">Todos os resumos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ===================== CONTEÚDO ===================== -->
+  <main>
+
+    <!-- Seção de boas-vindas -->
+    <section class="boas-vindas">
+      <h1>Bem-vindo aos meus resumos!</h1>
+      <p>Aqui ficam organizados os resumos das matérias de Ciência da Computação.</p>
+    </section>
+
+    <!-- Opções principais, em formato de cartões clicáveis -->
+    <section class="opcoes">
+
+      <a href="adicionar-resumo.html" class="cartao">
+        <div class="cartao-icone">➕</div>
+        <h2>Adicionar um resumo</h2>
+        <p>Envie um novo resumo em PDF.</p>
+      </a>
+
+      <a href="todos-resumos.html" class="cartao">
+        <div class="cartao-icone">📚</div>
+        <h2>Ver todos os resumos</h2>
+        <p>Veja a lista com todos os resumos salvos.</p>
+      </a>
+
+    </section>
+  </main>
+
+  <!-- ===================== RODAPÉ ===================== -->
+  <footer class="rodape">
+    <p>Meus Resumos · Ciência da Computação</p>
+  </footer>
+
+</body>
+
+</html>
