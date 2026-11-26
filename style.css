@@ -114,7 +114,14 @@ main {
   margin: 0 auto;         /* centraliza na horizontal */
   padding: 48px 24px;
 }
-
+.imagem-cachorro {
+  display: block;
+  margin: 24px auto 0;
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
 /* Seção de boas-vindas */
 .boas-vindas {
   text-align: center;
